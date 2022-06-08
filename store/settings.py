@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+from django.contrib.messages import constants
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #TODO: Remove before deployment
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +51,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    #TODO: Remove before deployment
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'store.urls'
@@ -103,9 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-BR'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Araguaina'
 
 USE_I18N = True
 
@@ -118,11 +125,43 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = Path(BASE_DIR / 'static')
+STATICFILES_DIRS = [
+    Path('templates/static')
+]
+
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = Path(BASE_DIR / 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configure messages
+MESSAGE_TAGS = {
+    constants.DEBUG: 'alert-info',
+    constants.ERROR: 'alert-danger',
+    constants.INFO: 'alert-info',
+    constants.SUCCESS: 'alert-success',
+    constants.WARNING: 'alert-warning'
+}
+
+# Configure sessions
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 # Save session for 7 dabys
+
+# Disable autosave session requests
+SESSION_SAVE_EVERY_REQUEST = False
+
+# TODO: Remove before deployment
+INTERNAL_IPS = [
+    "127.0.0.1",
+    "localhost"
+]
+
+
 
 # Override database configurations and hide some stuffs like passwords
 try:
