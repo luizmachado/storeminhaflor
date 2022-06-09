@@ -39,7 +39,7 @@ class OrderItem(models.Model):
         verbose_name='ID Variação produto')
     price = models.FloatField(verbose_name='Preço')
     # TODO: Verify the need of this property
-    price_discount = models.FloatField(
+    promotional_price = models.FloatField(
         default=0, verbose_name='Valor promocional')
     image = models.CharField(max_length=2000)
 

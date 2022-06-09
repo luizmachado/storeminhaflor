@@ -23,7 +23,7 @@ class Product(models.Model):
             ('V', 'Variável'),
             ('S', 'Simples'),
         ))
-    
+
     def __str__(self) -> str:
         return self.name
 
@@ -59,4 +59,9 @@ class Product(models.Model):
         img.close()
         new_img.close()
 
-    
+class Variation(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Modelo')
+    name = models.CharField(max_length=50, verbose_name='Nome')
+    price = models.FloatField(verbose_name='Preço')
+    promotional_price = models.FloatField(default=0, verbose_name='Preço promocional')
+    stock = models.PositiveIntegerField(default=0, verbose_name='Estoque')
