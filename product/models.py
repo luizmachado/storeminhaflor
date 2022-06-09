@@ -31,5 +31,32 @@ class Product(models.Model):
         verbose_name = 'Produto'
         verbose_name_plural = 'Produtos'
 
+    # Function to automatically resize product images
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        max_image_size = 800
+
+        if self.image:
+            self.resize_image(self.image.name, max_image_size)
+
+    # Method to resize images
+    @staticmethod
+    def resize_image(image_name, new_width):
+        image_path = Path(settings.MEDIA_ROOT / image_name)
+        img = Image.open(image_path)
+        width, height = img.size
+        if width <= 800:
+            img.close()
+            return
+        new_height = round((height * new_width) / width)
+        new_img = img.resize((new_width, new_height), Image.ANTIALIAS)
+        new_img.save(
+            image_path,
+            optimize=True,
+            quality=60,
+        )
+        img.close()
+        new_img.close()
 
     
