@@ -95,23 +95,6 @@ def formata_documento(documento, tipo):
     else:
         return None
 
-def gerar_documento(tipo):
-    if tipo == 'cpf':
-        documento=[]
-        for x in range(0,11):
-            documento.append(random.randint(0,9))
-        documento = calcular_digitos(documento, validar=False, tipo='cpf')
-        documento = ''.join(str(x) for x in documento[1])
-        return documento
-    elif tipo == 'cnpj':
-        documento=[]
-        for x in range(0,14):
-            documento.append(random.randint(0,9))
-        documento = calcular_digitos(documento, validar=False, tipo='cnpj')
-        documento = ''.join(str(x) for x in documento[1])
-        return documento
-    else:
-        return None
 
 def formata_cep(cep):
     formatado = f'{cep[0:5]}-{cep[5:9]}'
