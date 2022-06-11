@@ -6,6 +6,7 @@ from django.conf import settings
 urlpatterns = [
     path('', include('product.urls')),
     path('profile/', include('customer.urls')),
+    path('order/', include('order.urls')),
     path('admin/', admin.site.urls),
     
     #TODO: Remove debug_toolbar before deployment
