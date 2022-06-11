@@ -81,7 +81,7 @@ class CustomerAddress(models.Model):
     def __str__(self):
         return self.address_title
 
-    # TODO: Override clean function to validate CEP
+    # Override clean function to validate CEP
     def clean(self):
         error_messages = {}
         if len(self.cep) == 9:

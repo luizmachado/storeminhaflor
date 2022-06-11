@@ -1,6 +1,7 @@
 from django.db import models
 from pathlib import Path
 from django.conf import settings
+from django.utils.text import slugify
 from PIL import Image
 
 
@@ -11,9 +12,9 @@ class Product(models.Model):
     long_description = models.TextField(verbose_name='Descrição longa')
     image = models.ImageField(
         upload_to='product_images/%Y/%m/', verbose_name='Imagem', blank=True, null=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
     mkt_price = models.FloatField(verbose_name='Preço de exibição')
-    mkt_price_discount = models.FloatField(
+    mkt_price_promotional = models.FloatField(
         default=0, verbose_name='Preço promocional de exibição')
     type_product = models.CharField(
         default='V',
@@ -24,6 +25,14 @@ class Product(models.Model):
             ('S', 'Simples'),
         ))
 
+    def get_formated_price(self):
+        return f'R$ {self.mkt_price:.2f}'.replace('.', ',')
+    get_formated_price.short_description = 'Preço'
+
+    def get_formated_promo_price(self):
+        return f'R$ {self.mkt_price_promotional:.2f}'.replace('.', ',')
+    get_formated_promo_price.short_description = 'Preço promocional'
+
     def __str__(self) -> str:
         return self.name
 
@@ -31,12 +40,17 @@ class Product(models.Model):
         verbose_name = 'Produto'
         verbose_name_plural = 'Produtos'
 
-    # Function to automatically resize product images
     def save(self, *args, **kwargs):
+        # Generate slug automatically
+        if not self.slug:
+            slug = f'{slugify(self.name)}'
+            self.slug = slug
+
         super().save(*args, **kwargs)
 
         max_image_size = 800
 
+        # Function to automatically resize product images
         if self.image:
             self.resize_image(self.image.name, max_image_size)
 
