@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.forms import ValidationError
+from utils.documentos_utils import checar_validade, formata_documento
 
 
 class Customer(models.Model):
@@ -7,14 +9,26 @@ class Customer(models.Model):
         User, on_delete=models.CASCADE, verbose_name='Usuário')
     birth_date = models.DateField(verbose_name='Data de nascimento')
     cpf = models.CharField(
-        max_length=11, help_text='Insira o cpf sem pontuação', verbose_name='CPF')
+        max_length=14, verbose_name='CPF')
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
-    # TODO: Override clean function to validate CPF
+    # Override clean fuction do validate CPF
     def clean(self):
-        pass
+        error_messages = {}
+        if len(self.cpf) == 14:
+            if not checar_validade(self.cpf):
+                error_messages['cpf'] = 'Digite um CPF válido'
+        elif len(self.cpf) == 11:
+            self.cpf = formata_documento(self.cpf, 'cpf')
+            if not checar_validade(self.cpf):
+                error_messages['cpf'] = 'Digite um CPF válido'
+        else:
+            error_messages['cpf'] = 'Digite um CPF válido'
+
+        if error_messages:
+            raise ValidationError(error_messages)
 
     class Meta():
         verbose_name = 'Cliente'
