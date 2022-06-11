@@ -14,7 +14,7 @@ class Product(models.Model):
         upload_to='product_images/%Y/%m/', verbose_name='Imagem', blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
     mkt_price = models.FloatField(verbose_name='Preço de exibição')
-    mkt_price_discount = models.FloatField(
+    mkt_price_promotional = models.FloatField(
         default=0, verbose_name='Preço promocional de exibição')
     type_product = models.CharField(
         default='V',
@@ -24,6 +24,14 @@ class Product(models.Model):
             ('V', 'Variável'),
             ('S', 'Simples'),
         ))
+
+    def get_formated_price(self):
+        return f'R$ {self.mkt_price:.2f}'.replace('.', ',')
+    get_formated_price.short_description = 'Preço'
+
+    def get_formated_promo_price(self):
+        return f'R$ {self.mkt_price_promotional:.2f}'.replace('.', ',')
+    get_formated_promo_price.short_description = 'Preço promocional'
 
     def __str__(self) -> str:
         return self.name
