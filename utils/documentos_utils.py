@@ -114,10 +114,10 @@ def gerar_documento(tipo):
         return None
 
 def formata_cep(cep):
-    formatado = f'{cep[0:6]}-{6:8}'
+    formatado = f'{cep[0:5]}-{cep[5:9]}'
     return formatado
 
 def checar_cep(cep):
-    if re.search(r'^[^0-9]', self.cep) or len(self.cep) < 8:
+    if not re.match("([0-9]{5}-[0-9]{3})", cep):
         return False
     return True
