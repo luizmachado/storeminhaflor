@@ -9,7 +9,6 @@ class CustomerAdmin(admin.ModelAdmin):
     inlines = [
         CustomerAddressInline
     ]
-    raw_id_fields = ['user']
 
 
 admin.site.register(models.Customer, CustomerAdmin)

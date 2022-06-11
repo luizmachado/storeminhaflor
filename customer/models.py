@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.forms import ValidationError
-from utils.documentos_utils import checar_validade, formata_documento
+from utils.documentos_utils import checar_validade, formata_documento, checar_cep, formata_cep
 
 
 class Customer(models.Model):
@@ -44,7 +44,7 @@ class CustomerAddress(models.Model):
     number = models.CharField(max_length=5, verbose_name='Número')
     complement = models.CharField(max_length=30, verbose_name='Complemento')
     district = models.CharField(max_length=30, verbose_name='Bairro')
-    cep = models.CharField(max_length=8, verbose_name='CEP')
+    cep = models.CharField(max_length=9, verbose_name='CEP')
     city = models.CharField(max_length=30, verbose_name='Cidade')
     estate = models.CharField(
         max_length=2,
@@ -83,7 +83,19 @@ class CustomerAddress(models.Model):
 
     # TODO: Override clean function to validate CEP
     def clean(self):
-        pass
+        error_messages = {}
+        if len(self.cep) == 9:
+            if not checar_cep(self.cep):
+                error_messages['cep'] = 'Digite um CEP válido'
+        elif len(self.cep) == 8:
+            self.cep = formata_cep(self.cep)
+            if not checar_cep(self.cep):
+                error_messages['cep'] = 'Digite um CEP válido'
+        else:
+            error_messages['cep'] = 'Digite um CEP válido'
+
+        if error_messages:
+            raise ValidationError(error_messages)
 
     class Meta():
         verbose_name = 'Endereço'
