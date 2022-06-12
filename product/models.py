@@ -25,12 +25,15 @@ class Product(models.Model):
             ('S', 'Simples'),
         ))
 
+    # Format price visualization
     def get_formated_price(self):
         return f'R$ {self.mkt_price:.2f}'.replace('.', ',')
-    get_formated_price.short_description = 'Preço'
 
     def get_formated_promo_price(self):
         return f'R$ {self.mkt_price_promotional:.2f}'.replace('.', ',')
+        
+    # Change Django Admin Product preview description
+    get_formated_price.short_description = 'Preço'
     get_formated_promo_price.short_description = 'Preço promocional'
 
     def __str__(self) -> str:
