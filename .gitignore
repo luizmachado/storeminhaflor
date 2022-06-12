@@ -125,3 +125,6 @@ dmypy.json
 
 # Media files from summernote
 /media/
+
+# VSCode config files
+.vscode
