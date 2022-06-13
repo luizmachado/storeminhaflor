@@ -1,46 +1,44 @@
 {% extends 'base.html' %}
 {% block conteudo %}
-    <main class="container mt-4 mb-4">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for product in products %}
-                <div class="col">
-                    <div class="card">
-                        {% if product.image %}
-                            <a href="{{ product.slug }}">
-                                <img class="card-img-top"
-                                     src="{{ product.image.url }}"
-                                     alt="{{ product.name }}">
-                            </a>
+<main class="container mt-4 mb-4">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="card">
+                {% if product.image %}
+                <a href="{{ product.slug }}">
+                    <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
+                </a>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">
+                        {{ product.short_description }}
+                    </p>
+                    <div class="container product-price-block text-center">
+                        {% if product.mkt_price_promotional != 0 %}
+                        <span class="product-price">{{ product.get_formated_promo_price }}</span>
+                        <span class="product-old-price text-muted">{{ product.get_formated_price }}</span>
+                        {% else %}
+                        <span class="product-price">{{ product.get_formated_price }}</span>
                         {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">
-                                {{ product.short_description }}
-                            </p>
-                            <div class="container product-price-block text-center">
-                                {% if product.mkt_price_promotional != 0 %}
-                                    <span class="product-price">{{ product.get_formated_promo_price }}</span>
-                                    <span class="product-old-price text-muted">{{ product.get_formated_price }}</span>
-                                {% else %}
-                                    <span class="product-price">{{ product.get_formated_price }}</span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-light-custom text-center">
-                            <a href="{{ product.slug }}" class="btn btn-primary btn-sm m-1 btn-block">
-                                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                                Comprar
-                            </a>
-                        </div>
                     </div>
                 </div>
-            {% endfor %}
+                <div class="card-footer bg-transparent border-top-light-custom text-center">
+                    <a href="{{ product.slug }}" class="btn btn-primary btn-sm m-1 btn-block">
+                        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                        Comprar
+                    </a>
+                </div>
+            </div>
         </div>
-    </main>
-
-    <div class="row mt-3">
-        <div class="col">
-            {% include 'parciais/_pagination.html' %}
-        </div>
+        {% endfor %}
     </div>
+</main>
+
+<div class="row mt-3">
+    <div class="col">
+        {% include 'parciais/_pagination.html' %}
+    </div>
+</div>
 {% endblock %}
