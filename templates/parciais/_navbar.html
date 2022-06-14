@@ -1,7 +1,7 @@
 {% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{% url 'product:list' %}">
             <img src="{% static 'img/flor_50x50.png' %}" alt="" width="50" height="50" class="d-inline-block align-text-center">Minha Flor T-Shirts Store
         </a>
         <button class="navbar-toggler"
@@ -16,7 +16,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">Home</a>
+                    <a class="nav-link active" href="{% url 'product:list' %}">Home</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">T-Shirts</a>
