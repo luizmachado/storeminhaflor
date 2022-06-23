@@ -77,7 +77,7 @@ class Product(models.Model):
         new_img.close()
 
 class Variation(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Modelo')
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, verbose_name='Modelo')
     name = models.CharField(max_length=50, verbose_name='Nome', blank=True, null=True)
     price = models.FloatField(verbose_name='Preço')
     promotional_price = models.FloatField(default=0, verbose_name='Preço promocional')
