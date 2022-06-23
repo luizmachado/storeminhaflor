@@ -39,7 +39,6 @@
                                     <option data-preco="{{ var.price }}"
                                         data-preco-promocional="{{ var.promotional_price }}"
                                         value="{{ var.id }}">
-                                        <!--TODO: Fix to show name of product when there isn't a variation name-->
                                         {% if var.name %}
                                         {{ var.name }}
                                         {% else %}
@@ -48,7 +47,6 @@
                                     </option>
                                     {% else %}
                                     <option data-preco-promocional="{{ var.price }}" value="{{ var.id }}">
-                                        <!--TODO: Fix to show name of product when there isn't a variation name-->
                                         {% if var.name %}
                                         {{ var.name }}
                                         {% else %}
