@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load customfilters %}
 
 {% block conteudo %}
 
@@ -13,7 +14,7 @@
                             <img class="img-fluid" src="{{ product.image.url }}">
                             {% endif %}
                         </div>
-                    </div>
+                    </div> 
                 </div>
                 <div class="col-lg">
                     <div class="mt-4 mt-lg-0 mb-4">
@@ -21,12 +22,12 @@
                         <p class="lead">{{ product.short_description|linebreaks }}</p>
                         {% if product.mkt_price_promotional %}
                         <span id="variation-preco-promocional" class="lead product-price">
-                            {{ product.get_formated_promo_price}}</span>
+                            {{ product.mkt_price_promotional | format_price_brl }}</span>
                         <span id="variation-preco" class="lead product-old-price text-muted">
-                            {{product.get_formated_price }}</span>
+                            {{product.mkt_price | format_price_brl }}</span>
                         {% else %}
                         <span id="variation-preco" class="lead product-price">
-                            {{ product.get_formated_price}}</span>
+                            {{ product.mkt_price | format_price_brl }}</span>
                         </p>
                         {% endif %}
 
@@ -36,8 +37,8 @@
                                     {% for var in product.variation_set.all %}
 
                                     {% if var.promotional_price != 0 %}
-                                    <option data-preco="{{ var.price }}"
-                                        data-preco-promocional="{{ var.promotional_price }}"
+                                    <option data-preco="{{ var.price | format_price_brl }}"
+                                        data-preco-promocional="{{ var.promotional_price | format_price_brl }}"
                                         value="{{ var.id }}">
                                         {% if var.name %}
                                         {{ var.name }}
@@ -46,7 +47,7 @@
                                         {% endif %}
                                     </option>
                                     {% else %}
-                                    <option data-preco-promocional="{{ var.price }}" value="{{ var.id }}">
+                                    <option data-preco-promocional="{{ var.price | format_price_brl }}" value="{{ var.id }}">
                                         {% if var.name %}
                                         {{ var.name }}
                                         {% else %}
