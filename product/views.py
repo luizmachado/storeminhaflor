@@ -5,6 +5,7 @@ from django.views import View
 from django.http import HttpResponse
 from django.contrib import messages
 from django.urls import reverse
+from pprint import pprint
 from . import models
 
 
@@ -14,18 +15,24 @@ class ListProducts(ListView):
     context_object_name = 'products'
     paginate_by = 6
 
+
 class DetailProducts(DetailView):
     model = models.Product
     template_name = 'product/detail.html'
     context_object_name = 'product'
     slug_url_kwargs = 'slug'
 
+
 class AddCart(View):
     def get(self, *args, **kwargs):
+        #TODO: Remove lines below before deploy, its been used to clean cart
+        # if self.request.session.get('cart'):
+        #     del self.request.session['cart']
+        #     self.request.session.save()
         http_referer = self.request.META.get(
             'HTTP_REFERER',
             reverse('product:list')
-            )
+        )
         variation_id = self.request.GET.get('vid')
 
         if not variation_id:
@@ -37,6 +44,28 @@ class AddCart(View):
 
         variation = get_object_or_404(models.Variation, id=variation_id)
 
+        if variation.stock < 1:
+            messages.error(
+                self.request,
+                'Estoque insuficiente'
+            )
+            return redirect(http_referer)
+
+        product = variation.product
+        product_id = product.id
+        product_name = product.name
+        variation_name = variation.name or ''
+        unit_price = variation.price
+        unit_promo_price = variation.promotional_price
+        slug = product.slug
+        image = product.image
+        variation_stock = variation.stock
+
+        if image:
+            image = image.name
+        else:
+            image = ''
+
         # Create a session with cart key if not exist
         if not self.request.session.get('cart'):
             self.request.session['cart'] = {}
@@ -45,21 +74,54 @@ class AddCart(View):
         cart = self.request.session['cart']
 
         if variation_id in cart:
-            #TODO: Append product of the same variation in the cart
-            pass
-        else:
-            #TODO: Add new product variation in the cart
-            pass
+            quantity_cart = cart[variation_id]['quantity']
+            quantity_cart += 1
 
-        return HttpResponse(f'{variation.product}, {variation.name}')
+            if variation_stock < quantity_cart:
+                messages.error(
+                    self.request,
+                    f'Estoque insuficiente para {quantity_cart} x do '
+                    f'produto "{product_name} {variation_name}". Adicionamos '
+                    f'{variation_stock} x no seu carrinho'
+                )
+                quantity_cart = variation_stock
+            else:
+                messages.success(
+                    self.request,
+                    f'Produto {product_name} {variation_name}, adicionados com sucesso'
+                )
+        
+            cart[variation_id]['quantity'] = quantity_cart
+            cart[variation_id]['quantity_price'] = unit_price * quantity_cart
+            cart[variation_id]['quantity_promo_price'] = unit_promo_price * quantity_cart
+        else:
+            cart[variation_id] = {
+                'product_id' : product_id,
+                'product_name' : product_name,
+                'variation_name' : variation_name,
+                'unit_price' : unit_price,
+                'unit_promo_price' : unit_promo_price,
+                'quatity_price' : unit_price,
+                'quantity_promo_price' : unit_promo_price,
+                'quantity' : 1,
+                'slug' : slug,
+                'image' : image
+            }
+
+        self.request.session.save()
+
+        return redirect(http_referer)
+
 
 class RemoveFromCart(View):
     def get(self, *args, **kwargs):
         return HttpResponse('RemoveFromCart')
 
+
 class Cart(View):
     def get(self, *args, **kwargs):
         return HttpResponse('Cart')
+
 
 class Checkout(View):
     def get(self, *args, **kwargs):
