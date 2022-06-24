@@ -37,6 +37,19 @@ class AddCart(View):
 
         variation = get_object_or_404(models.Variation, id=variation_id)
 
+        # Create a session with cart key if not exist
+        if not self.request.session.get('cart'):
+            self.request.session['cart'] = {}
+            self.request.session.save()
+
+        cart = self.request.session['cart']
+
+        if variation_id in cart:
+            #TODO: Append product of the same variation in the cart
+            pass
+        else:
+            #TODO: Add new product variation in the cart
+            pass
 
         return HttpResponse(f'{variation.product}, {variation.name}')
 
