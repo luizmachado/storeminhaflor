@@ -97,6 +97,7 @@ class AddCart(View):
         else:
             cart[variation_id] = {
                 'product_id' : product_id,
+                'variation_id' : variation_id,
                 'product_name' : product_name,
                 'variation_name' : variation_name,
                 'unit_price' : unit_price,
