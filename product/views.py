@@ -101,7 +101,7 @@ class AddCart(View):
                 'variation_name' : variation_name,
                 'unit_price' : unit_price,
                 'unit_promo_price' : unit_promo_price,
-                'quatity_price' : unit_price,
+                'quantity_price' : unit_price,
                 'quantity_promo_price' : unit_promo_price,
                 'quantity' : 1,
                 'slug' : slug,
@@ -109,7 +109,6 @@ class AddCart(View):
             }
 
         self.request.session.save()
-
         return redirect(http_referer)
 
 
@@ -120,7 +119,7 @@ class RemoveFromCart(View):
 
 class Cart(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('Cart')
+        return render(self.request, 'product/cart.html')
 
 
 class Checkout(View):

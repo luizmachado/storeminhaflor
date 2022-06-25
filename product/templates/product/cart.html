@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block conteudo %}
+
+{% if request.session.cart %}
+
+<div class="row mt-3">
+    <div class="col">
+        <h3>Carrinho de compras</h3>
+        <p class="lead">Os produtos, quantidades e preços que você escolheu.</p>
+
+        <div class="table-responsive">
+            <table class="table">
+                <tr>
+                    <th class="d-none d-lg-block">Imagem</th>
+                    <th>Produto</th>
+                    <th>V.</th>
+                    <th>QTD.</th>
+                    <th>Total</th>
+                </tr>
+
+
+                {% for item in request.session.cart.values %}
+                <tr>
+                    <td class="d-none d-lg-block">
+                        <img class="cart-img" src="{% get_media_prefix %}{{ item.image }}">
+                    </td>
+                    <td>
+                        <a href="{% url 'product:detail' item.slug %}">
+                        {{ item.product_name }}
+                    </a>
+                        <!-- #TODO: Create fuction to remove item from cart -->
+                        <a class="ml-3" href="#">
+                            <i class="fas fa-times-circle text-danger" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                    <td>{{ item.variation_name }}</td>
+                    <td>{{ item.quantity }} x
+                        {% if item.unit_promo_price %}
+                        {{ item.unit_promo_price }}
+                        {% else %}
+                        {{ item.unit_price }}
+                        {% endif %}
+                    </td>
+                    {% if item.quantity_promo_price %}
+                    <td>{{ item.quantity_promo_price | format_price_brl }}</td>
+                    {% else %}
+                    <td>{{ item.quantity_price | format_price_brl }}</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+
+
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- #TODO: Create function to sum total of cart -->
+<div class="row mt-3">
+    <div class="col-lg">
+        <p class='lead'>Total no carrinho</p>
+
+        <div class='table-responsive'>
+            <table class="table">
+                <tr>
+                    <td class="font-weight-bold">Total</td>
+                    <td>R$100000</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg mt-auto">
+        <a class="btn btn-lg btn-block btn-primary" href="#">
+            Finalizar a compra
+        </a>
+    </div>
+</div>
+
+{% else %}
+
+<div class="row mt-3">
+    <div class="col">
+        <h3>Carrinho de compras</h3>
+        <p class="lead">Você não escolheu nenhum produto ainda, acesse nossa loja aproveite o preço baixo.</p>
+        <a href="{% url 'product:list' %}">Home</a>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
