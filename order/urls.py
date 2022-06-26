@@ -8,6 +8,6 @@ app_name = 'order'
 
 urlpatterns = [
     path('', views.PayOrder.as_view(), name='pay'),
-    path('close', views.CloseOrder.as_view(), name='close'),
+    path('saveorder', views.SaveOrder.as_view(), name='saveorder'),
     path('detail/<int:pk>', views.DetailOrder.as_view(), name='detail'),
 ]
