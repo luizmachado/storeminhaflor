@@ -10,5 +10,5 @@ urlpatterns = [
     path('removefromcart/', views.RemoveFromCart.as_view(), name='removefromcart'),
     #TODO: analyze if it is the best place, maybe in the order app
     path('cart/', views.Cart.as_view(), name='cart'),
-    path('checkout/', views.Checkout.as_view(), name='checkout'),
+    path('ordersummary/', views.OrderSummary.as_view(), name='ordersummary'),
 ]
