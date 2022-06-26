@@ -14,3 +14,7 @@ def format_price_brl(value):
 @register.filter
 def cart_total_qtd(cart):
     return accounting.cart_total_quantity(cart)
+
+@register.filter
+def cart_total(cart):
+    return accounting.cart_totals(cart)
