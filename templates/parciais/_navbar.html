@@ -30,16 +30,13 @@
                     <a class="nav-link" href="#">Semijoias</a>
                 </li>
             </ul>
+            {% if request.session.cart %}
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link nav-cart-link active" href="{% url 'product:cart' %}">
                         <span class="nav-cart-text mr-1">Carrinho</span>
                         <span class="nav-cart-count mr-1">
-                            {% if request.session.cart %}
                             <strong>{{ request.session.cart | cart_total_qtd }} x</strong>
-                            {% else %}
-                            <strong>0 x</strong>
-                            {% endif %}
                         </span>
                         <span class="nav-cart-icon mr-2">
                             <i class="fas fa-shopping-cart"></i>
@@ -47,6 +44,7 @@
                     </a>
                 </li>
             </ul>
+                            {% endif %}
             <form class="d-flex" action="">
                 <input name="termo"
                        value=""
