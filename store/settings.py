@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap5',
 
     #TODO: Remove before deployment
     'debug_toolbar',
@@ -156,6 +158,11 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 7 # Save session for 7 dabys
 
 # Disable autosave session requests
 SESSION_SAVE_EVERY_REQUEST = False
+
+# Configure Crispy Forms
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 
 # TODO: Remove before deployment
 INTERNAL_IPS = [
