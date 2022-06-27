@@ -1,15 +1,51 @@
 from curses.ascii import HT
+from urllib import request
 from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.views import View
 from django.forms import ModelForm
 from django.http import HttpResponse
+from . import models
+from . import forms
 
-class CreateCustomer(View):
+# Parent class to Create and Update Customer
+class BaseCustomer(View):
+    template_name = 'customer/create.html'
+
+    def setup(self, *args, **kwargs):
+        super().setup(*args, **kwargs)
+
+        if self.request.user.is_authenticated:
+            self.context = { 
+                'userform': forms.UserForm(
+                    data=self.request.POST or None,
+                    user = self.request.user,
+                    instance = self.request.user,
+                    ),
+                'customerform': forms.CustomerForm(
+                    data=self.request.POST or None
+                )
+            }
+        else:
+            self.context = { 
+                'userform': forms.UserForm(
+                    data=self.request.POST or None
+                    ),
+                'customerform': forms.CustomerForm(
+                    data=self.request.POST or None
+                )
+            }
+
+        self.rendering = render(self.request, self.template_name, self.context)
+
     def get(self, *args, **kwargs):
-        return HttpResponse('CreateCustomer')
+        return self.rendering
 
-class UpdateCustomer(View):
+class CreateCustomer(BaseCustomer):
+    def post(self, *args, **kwargs):
+        return self.rendering
+
+class UpdateCustomer(BaseCustomer):
     def get(self,*args, **kwargs):
         return HttpResponse('UpdateCustomer')
 
