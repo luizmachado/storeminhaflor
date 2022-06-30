@@ -11,6 +11,7 @@
         <form method="post" action="">
             {% csrf_token %}
             {{ userform | crispy }}
+            {{ customeraddressform | crispy }}
 
             <div class="row">
                 <div class="col">

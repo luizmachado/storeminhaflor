@@ -10,6 +10,12 @@ class CustomerForm(forms.ModelForm):
         fields = '__all__'
         exclude = ('user',)
 
+class CustomerAddressForm(forms.ModelForm):
+    class Meta:
+        model = models.CustomerAddress
+        fields = '__all__'
+        exclude = ('user',)
+
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(
