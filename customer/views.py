@@ -17,9 +17,18 @@ class BaseCustomer(View):
     def setup(self, *args, **kwargs):
         super().setup(*args, **kwargs)
 
+        self.profile = None
+
         if self.request.user.is_authenticated:
+            self.profile = models.Customer.objects.filter(
+                user=self.request.user).first()
+
+            self.context = {
                 'userform': forms.UserForm(
                     data=self.request.POST or None,
+                    user=self.request.user,
+                    instance=self.request.user,
+                ),
                 'customerform': forms.CustomerForm(
                     data=self.request.POST or None
                 ),
@@ -39,7 +48,7 @@ class BaseCustomer(View):
                     data=self.request.POST or None
                 )
             }
-        
+
         self.userform = self.context['userform']
         self.customerform = self.context['customerform']
         self.customeraddressform = self.context['customeraddressform']
@@ -49,8 +58,15 @@ class BaseCustomer(View):
     def get(self, *args, **kwargs):
         return self.rendering
 
+
 class CreateCustomer(BaseCustomer):
     def post(self, *args, **kwargs):
+        if not self.userform.is_valid() or not self.customerform.is_valid() \
+            or not self.customeraddressform.is_valid():
+            print('Inválido')
+            return self.rendering
+
+        print('Valido')
         return self.rendering
 
 
