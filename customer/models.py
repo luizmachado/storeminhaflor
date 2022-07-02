@@ -42,7 +42,8 @@ class CustomerAddress(models.Model):
         max_length=10, verbose_name='Título Endereço')
     address = models.CharField(max_length=50, verbose_name='Endereço')
     number = models.CharField(max_length=5, verbose_name='Número')
-    complement = models.CharField(max_length=30, verbose_name='Complemento')
+    complement = models.CharField(
+        max_length=30, verbose_name='Complemento', null=True, blank=True)
     district = models.CharField(max_length=30, verbose_name='Bairro')
     cep = models.CharField(max_length=9, verbose_name='CEP')
     city = models.CharField(max_length=30, verbose_name='Cidade')
