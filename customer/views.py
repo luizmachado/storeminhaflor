@@ -7,6 +7,8 @@ from django.views import View
 from django.forms import ModelForm
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+import copy
 from . import models
 from . import forms
 
@@ -18,6 +20,8 @@ class BaseCustomer(View):
 
     def setup(self, *args, **kwargs):
         super().setup(*args, **kwargs)
+
+        self.cart = copy.deepcopy(self.request.session.get('cart', {}))
 
         self.profile = None
 
@@ -118,8 +122,21 @@ class CreateCustomer(BaseCustomer):
 
 
 
-        print('Valido')
+        if password:
+            autentica = authenticate(
+                self.request,
+                username=user_customer,
+                password=password
+            )
+
+            if autentica:
+                login(self.request, user=user_customer)
+
+
+        self.request.session['cart'] = self.cart
+        self.request.session.save()
         return self.rendering
+
 
 
 class UpdateCustomer(BaseCustomer):
