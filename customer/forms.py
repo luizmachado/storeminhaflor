@@ -5,12 +5,14 @@ from . import models
 
 
 class CustomerForm(forms.ModelForm):
+
     class Meta:
         model = models.Customer
         fields = '__all__'
         exclude = ('user',)
 
 class CustomerAddressForm(forms.ModelForm):
+
     class Meta:
         model = models.CustomerAddress
         fields = '__all__'
