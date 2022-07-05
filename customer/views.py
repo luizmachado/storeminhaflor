@@ -63,6 +63,9 @@ class BaseCustomer(View):
         self.customerform = self.context['customerform']
         self.customeraddressform = self.context['customeraddressform']
 
+        if self.request.user.is_authenticated:
+            self.template_name = 'customer/update.html'
+
         self.rendering = render(self.request, self.template_name, self.context)
 
     def get(self, *args, **kwargs):
