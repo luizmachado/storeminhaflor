@@ -72,7 +72,7 @@ class BaseCustomer(View):
 class CreateCustomer(BaseCustomer):
     def post(self, *args, **kwargs):
         if not self.userform.is_valid() or not self.customerform.is_valid() \
-            or not self.customeraddressform.is_valid():
+                or not self.customeraddressform.is_valid():
             return self.rendering
 
         username = self.userform.cleaned_data.get('username')
@@ -81,9 +81,9 @@ class CreateCustomer(BaseCustomer):
         first_name = self.userform.cleaned_data.get('first_name')
         last_name = self.userform.cleaned_data.get('last_name')
 
-        #Logged user (update)
         # Logged user (update)
         if self.request.user.is_authenticated:
+            user_customer = get_object_or_404(
                 User, username=self.request.user.username)
 
             user_customer.username = username
@@ -93,18 +93,27 @@ class CreateCustomer(BaseCustomer):
             user_customer.email = email
             user_customer.first_name = first_name
             user_customer.last_name = last_name
-
-            customer = self.customerform.save(commit=False)
-            customer.user = user_customer
-
-            customeraddr = self.customeraddressform.save(commit=False)
-            customeraddr.user = customer
-
             user_customer.save()
-            customer.save()
-            customeraddr.save()
 
-        #Unlogged user (create)
+            if not self.profile:
+                self.customerform.cleaned_data['user'] = user_customer
+                profile = models.Customer(**self.customerform.cleaned_data)
+                profile.save()
+            else:
+                profile = self.customerform.save(commit=False)
+                profile.user = user_customer
+                profile.save()
+            if not self.address:
+                self.customeraddressform.cleaned_data['user'] = profile
+                address = models.CustomerAddress(
+                    **self.customeraddressform.cleaned_data)
+                address.save()
+            else:
+                address = self.customeraddressform.save(commit=False)
+                address.user = profile
+                address.save()
+
+        # Unlogged user (create)
         else:
             user_customer = self.userform.save(commit=False)
             user_customer.set_password(password)
@@ -123,8 +132,6 @@ class CreateCustomer(BaseCustomer):
             customer.save()
             customeraddr.save()
 
-
-
         if password:
             autentica = authenticate(
                 self.request,
@@ -135,11 +142,9 @@ class CreateCustomer(BaseCustomer):
             if autentica:
                 login(self.request, user=user_customer)
 
-
         self.request.session['cart'] = self.cart
         self.request.session.save()
         return self.rendering
-
 
 
 class UpdateCustomer(BaseCustomer):
