@@ -28,6 +28,8 @@ class BaseCustomer(View):
         if self.request.user.is_authenticated:
             self.profile = models.Customer.objects.filter(
                 user=self.request.user).first()
+            self.address = models.CustomerAddress.objects.filter(
+                user=self.profile).first()
 
             self.context = {
                 'userform': forms.UserForm(
@@ -37,9 +39,11 @@ class BaseCustomer(View):
                 ),
                 'customerform': forms.CustomerForm(
                     data=self.request.POST or None,
+                    instance=self.profile
                 ),
                 'customeraddressform': forms.CustomerAddressForm(
                     data=self.request.POST or None,
+                    instance=self.address
                 )
             }
         else:
@@ -77,10 +81,9 @@ class CreateCustomer(BaseCustomer):
         first_name = self.userform.cleaned_data.get('first_name')
         last_name = self.userform.cleaned_data.get('last_name')
 
-        #TODO: Load Customer and CustomerAddress information fields if exist
         #Logged user (update)
+        # Logged user (update)
         if self.request.user.is_authenticated:
-            user_customer = get_object_or_404( 
                 User, username=self.request.user.username)
 
             user_customer.username = username
