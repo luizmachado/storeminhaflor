@@ -7,7 +7,8 @@
     <div class="col-lg mt-3">
         <h4>Login</h4>
         <p>Se você já possui cadastro, basta acessar com seu usuário e senha.</p>
-        <form>
+        <form method="post" action="{% url 'customer:login' %}">
+            {% csrf_token %}
             <div class="form-group">
               <label for="InputUser">Usuário</label>
               <input type="text" name="username" class="form-control" id="InputUser" placeholder="Insira seu usuário">

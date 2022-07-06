@@ -7,7 +7,7 @@ from django.views import View
 from django.forms import ModelForm
 from django.http import HttpResponse
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 import copy
 from . import models
@@ -163,10 +163,39 @@ class UpdateCustomer(BaseCustomer):
 
 
 class LoginCustomer(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('LoginCustomer')
+    def post(self, *args, **kwargs):
+        username = self.request.POST['username']
+        password = self.request.POST['password']
+
+        if not username or not password:
+            messages.error(
+                self.request,
+                'Usuário ou senha inválidos'
+            )
+            return redirect('customer:create')
+        usuario = authenticate(self.request, username=username, password=password)
+
+        if not usuario:
+            messages.error(
+                self.request,
+                'Usuário ou senha inválidos'
+            )
+            return redirect('customer:create')
+
+
+        login(self.request, user=usuario)
+        messages.success(
+            self.request,
+            'Login realizado na Minha Flor Store'
+        )
+        return redirect('product:cart')
+
 
 
 class LogoutCustomer(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('LogoutCustomer')
+        cart = copy.deepcopy(self.request.session.get('cart'))
+        logout(self.request)
+        self.request.session['cart'] = cart
+        self.request.session.save()
+        return redirect('product:list')
