@@ -8,6 +8,7 @@ from django.forms import ModelForm
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 import copy
 from . import models
 from . import forms
@@ -147,6 +148,11 @@ class CreateCustomer(BaseCustomer):
 
         self.request.session['cart'] = self.cart
         self.request.session.save()
+
+        messages.success(
+            self.request,
+            'Seu cadastro foi criado/atualizado com sucesso !'
+        )
 
         return redirect('customer:create')
 
