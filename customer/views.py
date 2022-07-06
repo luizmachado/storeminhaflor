@@ -1,7 +1,7 @@
 from curses.ascii import HT
 from urllib import request
 from webbrowser import get
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic.list import ListView
 from django.views import View
 from django.forms import ModelForm
@@ -147,7 +147,8 @@ class CreateCustomer(BaseCustomer):
 
         self.request.session['cart'] = self.cart
         self.request.session.save()
-        return self.rendering
+
+        return redirect('customer:create')
 
 
 class UpdateCustomer(BaseCustomer):
