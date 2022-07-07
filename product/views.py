@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.urls import reverse
 from pprint import pprint
+from customer.models import Customer, CustomerAddress
 from . import models
 
 
@@ -150,4 +151,16 @@ class Cart(View):
 
 class OrderSummary(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('Checkout')
+        if not self.request.user.is_authenticated:
+            return redirect('customer:create')
+
+        self.profile = Customer.objects.filter(
+                user=self.request.user).first()
+        self.address = CustomerAddress.objects.filter(
+                user=self.profile).first()
+        context = {
+            'user': self.request.user,
+            'cart': self.request.session['cart'],
+            'address': self.address
+        }
+        return render(self.request, 'product/summary.html', context)
