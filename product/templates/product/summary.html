@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load customfilters %}
+
+{% block conteudo %}
+
+{% if request.session.cart %}
+<div class="row mb-5 mt-4">
+    <div class="col-lg">
+        <h2>Resumo da sua compra</h2>
+
+        <p class="lead">Dados do usuário</p>
+        <p>Caso precise editar, <a href="{% url 'customer:create' %}">clique aqui</a></p>
+        <dl class="row">
+            <dt class="col-lg-2">Nome:</dt>
+            <dd class="col-lg-4">{{ user.first_name }}</dd>
+            <dt class="col-lg-2">Sobrenome:</dt>
+            <dd class="col-lg-4">{{ user.last_name }}</dd>
+
+            <!--TODO: Create function to calculate age-->
+            <dt class="col-lg-2">Idade:</dt>
+            <dd class="col-lg-4">55</dd>
+            <dt class="col-lg-2">Nascimento:</dt>
+            <dd class="col-lg-4">{{ user.customer.birth_date }}</dd>
+
+            <dt class="col-lg-2">CPF:</dt>
+            <dd class="col-lg-4">{{ user.customer.cpf }}</dd>
+            <dt class="col-lg-2">E-mail:</dt>
+            <dd class="col-lg-4">{{ user.email }}</dd>
+        </dl>
+
+        <p class="lead">Dados de endereço</p>
+        <p>Caso precise editar, <a href="{% url 'customer:create' %}">clique aqui</a></p>
+        <dl class="row">
+            <dt class="col-lg-2">Endereço:</dt>
+            <dd class="col-lg-4">{{ address.address }}</dd>
+            <dt class="col-lg-2">Número:</dt>
+            <dd class="col-lg-4">{{ address.number }}</dd>
+
+            <dt class="col-lg-2">Complemento:</dt>
+            <dd class="col-lg-4">{{ address.complment }}</dd>
+            <dt class="col-lg-2">Bairro:</dt>
+            <dd class="col-lg-4">{{ address.district }}</dd>
+
+            <dt class="col-lg-2">Cidade:</dt>
+            <dd class="col-lg-4">{{ address.city }}</dd>
+            <dt class="col-lg-2">Estado:</dt>
+            <dd class="col-lg-4">{{ address.estate }}</dd>
+
+            <dt class="col-lg-2">CEP:</dt>
+            <dd class="col-lg-4">{{ address.cep }}</dd>
+        </dl>
+    </div>
+</div>
+
+{% include 'parciais/_cart.html' %}
+
+<div class="row mt-3">
+    <div class="col-lg">
+        <p class='lead'>Total no carrinho</p>
+
+        <div class='table-responsive'>
+            <table class="table">
+                <tr>
+                    <td class="font-weight-bold">Total</td>
+                    <td>{{ request.session.cart | cart_total | format_price_brl }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+<div class="row">
+    <div class="col">
+        <a class="btn btn-block btn-primary btn-lg" href="{% url 'order:pay' %}">
+            Realizar pedido e pagar
+        </a>
+    </div>
+</div>
+
+{% endblock %}
