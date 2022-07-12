@@ -77,6 +77,10 @@ class CreateCustomer(BaseCustomer):
     def post(self, *args, **kwargs):
         if not self.userform.is_valid() or not self.customerform.is_valid() \
                 or not self.customeraddressform.is_valid():
+            messages.error(
+                self.request,
+                'Existem erros no formulário que precisam da sua atenção'
+            )
             return self.rendering
 
         username = self.userform.cleaned_data.get('username')
