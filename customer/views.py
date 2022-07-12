@@ -158,7 +158,10 @@ class CreateCustomer(BaseCustomer):
             'Seu cadastro foi criado/atualizado com sucesso !'
         )
 
-        return redirect('customer:create')
+        if not self.request.session['cart']:
+            return redirect('product:list')
+        else:
+            return redirect('product:cart')
 
 
 class UpdateCustomer(BaseCustomer):
@@ -192,7 +195,11 @@ class LoginCustomer(View):
             self.request,
             'Login realizado na Minha Flor Store'
         )
-        return redirect('product:cart')
+
+        if not self.request.session['cart']:
+            return redirect('product:list')
+        else:
+            return redirect('product:cart')
 
 
 
