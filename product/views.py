@@ -158,6 +158,17 @@ class OrderSummary(View):
                 user=self.request.user).first()
         self.address = CustomerAddress.objects.filter(
                 user=self.profile).first()
+
+        profile = Customer.objects.filter(
+            user=self.request.user).exists()
+        address = CustomerAddress.objects.filter(
+            user=profile).exists()
+        if not profile or address:
+            messages.error(
+                self.request,
+                'Usuário sem perfil'
+            )
+            return redirect('customer:create')
         context = {
             'user': self.request.user,
             'cart': self.request.session['cart'],
