@@ -26,7 +26,7 @@ class DetailProducts(DetailView):
 
 class AddCart(View):
     def get(self, *args, **kwargs):
-        #TODO: Remove lines below before deploy, its been used to clean cart
+        # TODO: Remove lines below before deploy, its been used to clean cart
         # if self.request.session.get('cart'):
         #     del self.request.session['cart']
         #     self.request.session.save()
@@ -91,23 +91,23 @@ class AddCart(View):
                     self.request,
                     f'Produto {product_name} {variation_name}, adicionados com sucesso'
                 )
-        
+
             cart[variation_id]['quantity'] = quantity_cart
             cart[variation_id]['quantity_price'] = unit_price * quantity_cart
             cart[variation_id]['quantity_promo_price'] = unit_promo_price * quantity_cart
         else:
             cart[variation_id] = {
-                'product_id' : product_id,
-                'variation_id' : variation_id,
-                'product_name' : product_name,
-                'variation_name' : variation_name,
-                'unit_price' : unit_price,
-                'unit_promo_price' : unit_promo_price,
-                'quantity_price' : unit_price,
-                'quantity_promo_price' : unit_promo_price,
-                'quantity' : 1,
-                'slug' : slug,
-                'image' : image
+                'product_id': product_id,
+                'variation_id': variation_id,
+                'product_name': product_name,
+                'variation_name': variation_name,
+                'unit_price': unit_price,
+                'unit_promo_price': unit_promo_price,
+                'quantity_price': unit_price,
+                'quantity_promo_price': unit_promo_price,
+                'quantity': 1,
+                'slug': slug,
+                'image': image
             }
 
         self.request.session.save()
@@ -127,7 +127,7 @@ class RemoveFromCart(View):
 
         if not self.request.session.get('cart'):
             return redirect(http_referer)
-        
+
         if variation_id not in self.request.session['cart']:
             return redirect(http_referer)
 
@@ -155,20 +155,31 @@ class OrderSummary(View):
             return redirect('customer:create')
 
         self.profile = Customer.objects.filter(
-                user=self.request.user).first()
+            user=self.request.user).first()
         self.address = CustomerAddress.objects.filter(
-                user=self.profile).first()
+            user=self.profile).first()
 
         profile = Customer.objects.filter(
             user=self.request.user).exists()
         address = CustomerAddress.objects.filter(
             user=profile).exists()
+
+        # Check if customer there is profile and address
         if not profile or address:
             messages.error(
                 self.request,
-                'Usuário sem perfil'
+                'Usuário sem perfil ou endereço'
             )
             return redirect('customer:create')
+
+        # Check if there is item in the cart
+        if not self.request.session['cart']:
+            messages.error(
+                self.request,
+                'Não há itens no carrinho'
+            )
+            return redirect('product:list')
+
         context = {
             'user': self.request.user,
             'cart': self.request.session['cart'],
