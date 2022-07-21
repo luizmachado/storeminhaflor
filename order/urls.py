@@ -1,6 +1,4 @@
 from django.urls import path
-
-from customer.views import CreateCustomer
 from . import views
 
 
