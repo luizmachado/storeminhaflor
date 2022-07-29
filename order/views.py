@@ -41,6 +41,37 @@ class PayOrder(View):
                 'Usuário sem perfil ou endereço'
             )
             return redirect('customer:create')
+
+        cart = self.request.session.get('cart')
+        cart_variation_ids = [v for v in cart]
+        bd_variations = list(Variation.objects.select_related('product')\
+            .filter(id__in=cart_variation_ids))
+
+        for variation in bd_variations:
+            vid = str(variation.id)
+            vstock = variation.stock
+            vqty = cart[vid]['quantity']
+            vuniprice = cart[vid]['unit_price']
+            vunipromoprice = cart[vid]['unit_promo_price']
+
+            if vstock < vqty:
+                cart[vid]['quantity'] = vstock
+                cart[vid]['quantity_price'] = vstock * vuniprice
+                cart[vid]['quantity_promo_price'] = vstock * vunipromoprice
+                self.request.session.save()
+ 
+                messages.error(
+                    self.request,
+                    f'Não há estoque suficiente do produto'
+                    f' {cart[vid]["product_name"]}! A quantidade foi reduzida,'
+                    f' verifique seu carrinho !'
+                )
+                return redirect('product:cart')
+        
+
+        context = {
+
+        }
         return render(self.request, self.template_name, context)
 
 class SaveOrder(View):
