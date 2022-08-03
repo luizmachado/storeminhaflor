@@ -26,10 +26,6 @@ class DetailProducts(DetailView):
 
 class AddCart(View):
     def get(self, *args, **kwargs):
-        # TODO: Remove lines below before deploy, its been used to clean cart
-        # if self.request.session.get('cart'):
-        #     del self.request.session['cart']
-        #     self.request.session.save()
         http_referer = self.request.META.get(
             'HTTP_REFERER',
             reverse('product:list')
