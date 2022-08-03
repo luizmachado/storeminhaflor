@@ -46,7 +46,9 @@ class PayOrder(View):
         cart_variation_ids = [v for v in cart]
         bd_variations = list(Variation.objects.select_related('product')\
             .filter(id__in=cart_variation_ids))
+        
 
+        msg_error = []
         for variation in bd_variations:
             vid = str(variation.id)
             vstock = variation.stock
@@ -54,19 +56,24 @@ class PayOrder(View):
             vuniprice = cart[vid]['unit_price']
             vunipromoprice = cart[vid]['unit_promo_price']
 
+
             if vstock < vqty:
                 cart[vid]['quantity'] = vstock
                 cart[vid]['quantity_price'] = vstock * vuniprice
                 cart[vid]['quantity_promo_price'] = vstock * vunipromoprice
                 self.request.session.save()
+
+                msg_error.append(f'Não há estoque suficiente do produto '
+                    f'{cart[vid]["product_name"]}! A quantidade foi reduzida,'
+                    f'verifique seu carrinho !')
  
+        if msg_error:
+            for indice, msg in enumerate(msg_error):
                 messages.error(
                     self.request,
-                    f'Não há estoque suficiente do produto'
-                    f' {cart[vid]["product_name"]}! A quantidade foi reduzida,'
-                    f' verifique seu carrinho !'
+                    msg_error[indice]
                 )
-                return redirect('product:cart')
+            return redirect('product:cart')
         
 
         context = {
