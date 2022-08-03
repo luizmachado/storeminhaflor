@@ -6,6 +6,7 @@ class Order(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name='Usuário')
     total = models.FloatField(verbose_name='Total')
+    qtd_total = models.PositiveIntegerField(verbose_name='Quantidade')
     status = models.CharField(
         verbose_name='Status',
         default="C",
