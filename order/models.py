@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 class Order(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name='Usuário')
-    total = models.FloatField(verbose_name='Total')
-    qtd_total = models.PositiveIntegerField(verbose_name='Qtd Total')
+    total = models.FloatField(verbose_name='Valor total do Pedido')
+    qtd_total = models.PositiveIntegerField(verbose_name='Qtd Itens')
     status = models.CharField(
         verbose_name='Status',
         default="C",
