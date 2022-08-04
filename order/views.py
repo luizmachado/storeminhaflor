@@ -1,5 +1,5 @@
 from telnetlib import STATUS
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.views.generic.list import ListView
 from django.views import View
 from django.forms import ModelForm
@@ -10,8 +10,8 @@ from product.models import Variation
 from utils import accounting
 from . import models
 
-class PayOrder(View):
-    template_name = 'order/pay.html'
+class SaveOrder(View):
+    template_name = 'order/saveorder.html'
 
     def get(self, *args, **kwargs):
         # Check if user is logged
@@ -108,13 +108,24 @@ class PayOrder(View):
         #Clean cart after save order
         del self.request.session['cart']
 
-        return redirect('order:list')
+        return redirect(
+            reverse(
+                'order:pay',
+                kwargs={
+                    'pk': order.pk
+                }
+            )
+        )
 
 
-class SaveOrder(View):
+class PayOrder(View):
     def get(self, *args, **kwargs):
-        return HttpResponse('CloseOrder')
+        return HttpResponse('PayOrder')
 
 class DetailOrder(View):
     def get(self, *args, **kwargs):
         return HttpResponse('DetailOrder')
+
+class ListOrder(View):
+    def get(self, *args, **kwargs):
+        return HttpResponse('ListOrder')
