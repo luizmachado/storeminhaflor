@@ -6,7 +6,7 @@ class Order(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, verbose_name='Usuário')
     total = models.FloatField(verbose_name='Total')
-    qtd_total = models.PositiveIntegerField(verbose_name='Quantidade')
+    qtd_total = models.PositiveIntegerField(verbose_name='Qtd Total')
     status = models.CharField(
         verbose_name='Status',
         default="C",
@@ -42,6 +42,7 @@ class OrderItem(models.Model):
     # TODO: Verify the need of this property
     promotional_price = models.FloatField(
         default=0, verbose_name='Valor promocional')
+    quantity = models.PositiveIntegerField(verbose_name='Quantidade')
     image = models.CharField(max_length=2000)
 
 
