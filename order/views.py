@@ -104,10 +104,12 @@ class PayOrder(View):
                 ) for v in cart.values()
             ]
         )
-        context = {
 
-        }
-        return render(self.request, self.template_name, context)
+        #Clean cart after save order
+        del self.request.session['cart']
+
+        return redirect('order:list')
+
 
 class SaveOrder(View):
     def get(self, *args, **kwargs):
