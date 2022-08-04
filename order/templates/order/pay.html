@@ -1,10 +1,78 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load customfilters %}
+
 
 {% block conteudo %}
-<div class="row mt-3">
-    <div class="col">
-        <h3>Escolha o método de pagamento</h3>
-        <p>Adicione seu método de pagamento preferido:</p>
+<main class="container mt-4 mb-4">
+    <div class="row">
+        <div class="col">
+            <h3>Escolha o método de pagamento</h3>
+            <p>Adicionar aqui métodos de pagamento</p>
+        </div>
     </div>
-</div>
+
+    <div class="row">
+        <div class="col">
+            <h3>{{order}}</h3>
+
+            <div class="row mt-4">
+                <div class="col-lg-2 font-weight-bold">Número do pedido:</div>
+                <div class="col-lg-4">{{order.id}}</div>
+                <div class="col-lg-2 font-weight-bold">Total a pagar:</div>
+                <div class="col-lg-4">{{order.total | format_price_brl}}</div>
+
+                <div class="col-lg-2 font-weight-bold">QTD. Itens:</div>
+                <div class="col-lg-4">{{order.qtd_total}}</div>
+                <div class="col-lg-2 font-weight-bold">Status:</div>
+                <div class="col-lg-4">{{order.get_status_display}}</div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col">
+                    <h3>Produtos</h3>
+                </div>
+            </div>
+            <div class="table-responsive mt-3">
+                <table class="table">
+                    <tr>
+                        <th class="d-none d-lg-block">Imagem</th>
+                        <th>Produto</th>
+                        <th>Variação</th>
+                        <th>QTD.</th>
+                        <th>Total</th>
+                    </tr>
+
+
+                    {% for item in order.orderitem_set.all %}
+                    <tr>
+                        <td class="d-none d-lg-block">
+                            <img class="cart-img" src="{% get_media_prefix %}{{ item.image }}"">
+                        </td>
+                        <td>{{ item.product }}</td>
+                        <td>{{ item.variation }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>
+                            {% if item.promotional_price %}
+                            {{ item.promotional_price }}
+                            {% else %}
+                            {{ item.price }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+
+
+            <div class="row mt-4">
+                <div class="col">
+                    <a href="#" class="btn btn-primary btn-block btn-lg">Pagar</a>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</main>
 {% endblock %}

@@ -1,6 +1,8 @@
+from multiprocessing import context
 from telnetlib import STATUS
 from django.shortcuts import render, redirect, reverse
 from django.views.generic.list import ListView
+from django.views.generic import DetailView
 from django.views import View
 from django.forms import ModelForm
 from django.http import HttpResponse
@@ -9,6 +11,7 @@ from customer.models import Customer, CustomerAddress
 from product.models import Variation
 from utils import accounting
 from . import models
+
 
 class SaveOrder(View):
     template_name = 'order/saveorder.html'
@@ -46,9 +49,8 @@ class SaveOrder(View):
 
         cart = self.request.session.get('cart')
         cart_variation_ids = [v for v in cart]
-        bd_variations = list(Variation.objects.select_related('product')\
-            .filter(id__in=cart_variation_ids))
-        
+        bd_variations = list(Variation.objects.select_related('product')
+                             .filter(id__in=cart_variation_ids))
 
         msg_error = []
         for variation in bd_variations:
@@ -58,7 +60,6 @@ class SaveOrder(View):
             vuniprice = cart[vid]['unit_price']
             vunipromoprice = cart[vid]['unit_promo_price']
 
-
             if vstock < vqty:
                 cart[vid]['quantity'] = vstock
                 cart[vid]['quantity_price'] = vstock * vuniprice
@@ -66,9 +67,9 @@ class SaveOrder(View):
                 self.request.session.save()
 
                 msg_error.append(f'Não há estoque suficiente do produto '
-                    f'{cart[vid]["product_name"]}! A quantidade foi reduzida,'
-                    f'verifique seu carrinho !')
- 
+                                 f'{cart[vid]["product_name"]}! A quantidade foi reduzida,'
+                                 f'verifique seu carrinho !')
+
         if msg_error:
             for indice, msg in enumerate(msg_error):
                 messages.error(
@@ -76,36 +77,36 @@ class SaveOrder(View):
                     msg_error[indice]
                 )
             return redirect('product:cart')
-        
+
         qtd_total_cart = accounting.cart_total_quantity(cart)
         price_total_cart = accounting.cart_totals(cart)
-        
+
         order = models.Order(
-            user = self.request.user,
-            total = price_total_cart,
-            qtd_total = qtd_total_cart,
-            status = 'C',
+            user=self.request.user,
+            total=price_total_cart,
+            qtd_total=qtd_total_cart,
+            status='C',
         )
         order.save()
 
         models.OrderItem.objects.bulk_create(
             [
                 models.OrderItem(
-                    order = order,
-                    product = v['product_name'],
-                    product_id = v['product_id'],
-                    variation = v['variation_name'],
-                    variation_id = v['variation_id'],
-                    price = v['quantity_price'],
-                    promotional_price = v['quantity_promo_price'],
-                    quantity = v['quantity'],
-                    image = v['image'],
+                    order=order,
+                    product=v['product_name'],
+                    product_id=v['product_id'],
+                    variation=v['variation_name'],
+                    variation_id=v['variation_id'],
+                    price=v['quantity_price'],
+                    promotional_price=v['quantity_promo_price'],
+                    quantity=v['quantity'],
+                    image=v['image'],
 
                 ) for v in cart.values()
             ]
         )
 
-        #Clean cart after save order
+        # Clean cart after save order
         del self.request.session['cart']
 
         return redirect(
@@ -118,13 +119,17 @@ class SaveOrder(View):
         )
 
 
-class PayOrder(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('PayOrder')
+class PayOrder(DetailView):
+    template_name = 'order/pay.html'
+    model = models.Order
+    pk_url_kwarg = 'pk'
+    context_object_name = 'order'
+
 
 class DetailOrder(View):
     def get(self, *args, **kwargs):
         return HttpResponse('DetailOrder')
+
 
 class ListOrder(View):
     def get(self, *args, **kwargs):
