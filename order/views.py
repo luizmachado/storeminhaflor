@@ -1,3 +1,4 @@
+from telnetlib import STATUS
 from django.shortcuts import render, redirect
 from django.views.generic.list import ListView
 from django.views import View
@@ -6,6 +7,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from customer.models import Customer, CustomerAddress
 from product.models import Variation
+from utils import accounting
 from . import models
 
 class PayOrder(View):
@@ -75,7 +77,33 @@ class PayOrder(View):
                 )
             return redirect('product:cart')
         
+        qtd_total_cart = accounting.cart_total_quantity(cart)
+        price_total_cart = accounting.cart_totals(cart)
+        
+        order = models.Order(
+            user = self.request.user,
+            total = price_total_cart,
+            qtd_total = qtd_total_cart,
+            status = 'C',
+        )
+        order.save()
 
+        models.OrderItem.objects.bulk_create(
+            [
+                models.OrderItem(
+                    order = order,
+                    product = v['product_name'],
+                    product_id = v['product_id'],
+                    variation = v['variation_name'],
+                    variation_id = v['variation_id'],
+                    price = v['quantity_price'],
+                    promotional_price = v['quantity_promo_price'],
+                    quantity = v['quantity'],
+                    image = v['image'],
+
+                ) for v in cart.values()
+            ]
+        )
         context = {
 
         }
