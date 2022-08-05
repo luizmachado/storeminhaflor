@@ -13,6 +13,13 @@ from utils import accounting
 from . import models
 
 
+class DispatchLoginRequired(View):
+    def dispatch(self, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return redirect('customer:create')
+
+        return super().dispatch(*args, **kwargs)
+
 class SaveOrder(View):
     template_name = 'order/saveorder.html'
 
@@ -119,11 +126,16 @@ class SaveOrder(View):
         )
 
 
-class PayOrder(DetailView):
+class PayOrder(DispatchLoginRequired, DetailView):
     template_name = 'order/pay.html'
     model = models.Order
     pk_url_kwarg = 'pk'
     context_object_name = 'order'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        qs = qs.filter(user=self.request.user)
+        return qs
 
 
 class DetailOrder(View):
