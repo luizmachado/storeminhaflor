@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load customfilters %}
+
+
+{% block conteudo %}
+<main class="container mt-4 mb-4">
+	<div class="row">
+		<div class="col">
+			<h3>Detalhes do pedido {{order}}</h3>
+		</div>
+	</div>
+{% include 'parciais/_order.html' %}
+</main>
+{% endblock %}
