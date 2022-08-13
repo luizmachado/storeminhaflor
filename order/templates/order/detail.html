@@ -11,5 +11,10 @@
 		</div>
 	</div>
 {% include 'parciais/_order.html' %}
+<div class="row mt-4">
+	<div class="col">
+		<a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary btn-block btn-lg">Voltar</a>
+	</div>
+</div>
 </main>
 {% endblock %}
