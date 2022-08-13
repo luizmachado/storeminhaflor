@@ -196,7 +196,7 @@ class LoginCustomer(View):
             'Login realizado na Minha Flor Store'
         )
 
-        if not self.request.session['cart']:
+        if not self.request.session.get('cart'):
             return redirect('product:list')
         else:
             return redirect('product:cart')
@@ -210,3 +210,4 @@ class LogoutCustomer(View):
         self.request.session['cart'] = cart
         self.request.session.save()
         return redirect('product:list')
+
