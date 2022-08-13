@@ -149,3 +149,4 @@ class ListOrder(DispatchLoginRequiredMixin, ListView):
     context_object_name = 'orders'
     template_name = 'order/list.html'
     paginate_by = 10
+    ordering = ['-id']
