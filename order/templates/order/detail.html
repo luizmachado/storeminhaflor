@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load customfilters %}
-{% block titulo %}Detalhes do Pedido{% endblock %}
+{% block titulo %}Detalhes do Pedido {{user}}{% endblock %}
 
 {% block conteudo %}
 <main class="container mt-4 mb-4">
