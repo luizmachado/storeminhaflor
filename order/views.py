@@ -139,9 +139,11 @@ class PayOrder(DispatchLoginRequiredMixin, DetailView):
 
 
 
-class DetailOrder(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('DetailOrder')
+class DetailOrder(DispatchLoginRequiredMixin, DetailView):
+    model = models.Order
+    context_object_name = 'order'
+    template_name = 'order/detail.html'
+    pk_url_kwarg = 'pk'
 
 
 class ListOrder(DispatchLoginRequiredMixin, ListView):
