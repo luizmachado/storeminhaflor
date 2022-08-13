@@ -52,6 +52,9 @@
                         </li>
                         {% endif %}
                         <li>
+                            <a class="dropdown-item" href="{% url 'order:list' %}">Pedidos</a>
+                        </li>
+                        <li>
                             <a class="dropdown-item" href="{% url 'customer:logout' %}">Sair</a>
                         </li>
                     </ul>
