@@ -144,6 +144,8 @@ class DetailOrder(View):
         return HttpResponse('DetailOrder')
 
 
-class ListOrder(View):
-    def get(self, *args, **kwargs):
-        return HttpResponse('ListOrder')
+class ListOrder(DispatchLoginRequiredMixin, ListView):
+    model = models.Order
+    context_object_name = 'orders'
+    template_name = 'order/list.html'
+    paginate_by = 10
