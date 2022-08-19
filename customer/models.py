@@ -14,21 +14,34 @@ class Customer(models.Model):
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
-    # Override clean fuction do validate CPF
     def clean(self):
+        '''Override clean fuction do validate CPF'''
         error_messages = {}
-        if len(self.cpf) == 14:
-            if not checar_validade(self.cpf):
+
+        if self.cpf:
+            #Validate and format cpf
+            if len(self.cpf) == 14:
+                if not checar_validade(self.cpf):
+                    error_messages['cpf'] = 'Digite um CPF válido'
+            elif len(self.cpf) == 11:
+                self.cpf = formata_documento(self.cpf, 'cpf')
+                if not checar_validade(self.cpf):
+                    error_messages['cpf'] = 'Digite um CPF válido'
+            else:
                 error_messages['cpf'] = 'Digite um CPF válido'
-        elif len(self.cpf) == 11:
-            self.cpf = formata_documento(self.cpf, 'cpf')
-            if not checar_validade(self.cpf):
-                error_messages['cpf'] = 'Digite um CPF válido'
-        else:
-            error_messages['cpf'] = 'Digite um CPF válido'
+
+        #Check if there is another cpf registered yet
+        cpf_salvo = None
+        customer = Customer.objects.filter(cpf=self.cpf).first()
+        if customer:
+                cpf_salvo = customer.cpf
+                if cpf_salvo is not None and self.pk != customer.pk:
+                    error_messages['cpf'] = 'CPF já cadastrado'
+
 
         if error_messages:
             raise ValidationError(error_messages)
+
 
     class Meta():
         verbose_name = 'Cliente'
