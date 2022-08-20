@@ -5,6 +5,7 @@ from django.views import View
 from django.http import HttpResponse
 from django.contrib import messages
 from django.urls import reverse
+from django.db.models import Q
 from pprint import pprint
 from customer.models import Customer, CustomerAddress
 from . import models
@@ -16,6 +17,22 @@ class ListProducts(ListView):
     context_object_name = 'products'
     paginate_by = 6
     ordering = ['-id']
+
+class ProductSearch(ListProducts):
+    def get_queryset(self, *args, **kwargs):
+        termo = self.request.GET.get('termo')
+        qs = super().get_queryset(*args, **kwargs)
+
+        if not termo:
+            return qs 
+
+        qs = qs.filter(
+                Q(name__icontains=termo) |
+                Q(short_description__icontains=termo) |
+                Q(long_description__icontains=termo)
+                )
+
+        return qs
 
 
 class DetailProducts(DetailView):

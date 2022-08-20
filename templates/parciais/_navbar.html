@@ -80,9 +80,9 @@
                     </li>
                 </ul>
             {% endif %}
-            <form class="d-flex" action="">
+	    <form class="d-flex" method="GET" action="{% url 'product:search' %}">
                 <input name="termo"
-                       value=""
+		       value="{{ request.GET.termo }}"
                        class="form-control me--2"
                        type="search"
                        placeholder="Pesquisar"
