@@ -20,18 +20,19 @@ class ListProducts(ListView):
 
 class ProductSearch(ListProducts):
     def get_queryset(self, *args, **kwargs):
-        termo = self.request.GET.get('termo')
+        termo = self.request.GET.get('termo') or self.request.session['termo']
         qs = super().get_queryset(*args, **kwargs)
 
         if not termo:
             return qs 
 
+        self.request.session['termo'] = termo
         qs = qs.filter(
-                Q(name__icontains=termo) |
-                Q(short_description__icontains=termo) |
-                Q(long_description__icontains=termo)
+                Q(name__icontains= self.request.session['termo']) |
+                Q(short_description__icontains=self.request.session['termo']) |
+                Q(long_description__icontains=self.request.session['termo'])
                 )
-
+        self.request.session.save()
         return qs
 
 
